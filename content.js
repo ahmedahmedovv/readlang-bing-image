@@ -20,6 +20,18 @@ function createSidebar() {
             const content = doc.querySelector('.sidebar-content');
             if (content) {
                 sidebar.appendChild(content);
+                
+                // Add search functionality
+                const searchButton = sidebar.querySelector('#searchButton');
+                const searchInput = sidebar.querySelector('#searchInput');
+                
+                searchButton.addEventListener('click', () => performSearch(searchInput.value));
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        performSearch(searchInput.value);
+                    }
+                });
+                
                 console.log('Sidebar content loaded from HTML');
             }
         })
@@ -45,3 +57,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('Sidebar classes:', sidebar.className);
     }
 }); 
+
+function performSearch(query) {
+    const resultsContainer = document.querySelector('#searchResults');
+    resultsContainer.innerHTML = 'Loading...';
+    
+    // Using Bing image search
+    const searchUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
+    
+    // Create an iframe to show the search results
+    resultsContainer.innerHTML = `
+        <div style="height: calc(100vh - 200px); width: 100%;">
+            <iframe 
+                src="${searchUrl}"
+                style="
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: 4px;
+                    background: white;
+                "
+            ></iframe>
+        </div>
+    `;
+} 

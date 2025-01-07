@@ -3,7 +3,10 @@
   "name": "Hello World Sidebar",
   "version": "1.0",
   "description": "A simple sidebar extension",
-  "permissions": ["activeTab"],
+  "permissions": [
+    "activeTab",
+    "https://*.googleapis.com/"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -18,5 +21,8 @@
   "web_accessible_resources": [{
     "resources": ["sidebar.html"],
     "matches": ["<all_urls>"]
-  }]
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 } 

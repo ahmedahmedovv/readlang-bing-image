@@ -41,4 +41,59 @@
 
 .hello-table tr:hover {
     background-color: #f5f5f5;
+}
+
+.search-container {
+    margin: 20px 0;
+}
+
+#searchInput {
+    width: 70%;
+    padding: 8px;
+    margin-right: 10px;
+}
+
+#searchButton {
+    padding: 8px 15px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#searchResults {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#searchResults img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Style the Google Custom Search container */
+.search-container .gsc-control-cse {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Style the search box */
+.search-container .gsc-input-box {
+    border-radius: 4px;
+}
+
+/* Style the search button */
+.search-container .gsc-search-button {
+    margin-left: 4px;
+}
+
+/* Adjust results layout */
+.search-container .gsc-results-wrapper-overlay {
+    max-width: 280px;  /* Adjust based on your sidebar width */
+    right: 0;
+    left: auto;
 } 
