@@ -88,10 +88,8 @@ function performSearch(query) {
     const resultsContainer = document.querySelector('#searchResults');
     resultsContainer.innerHTML = 'Loading...';
     
-    // Using Bing image search
     const searchUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
     
-    // Create an iframe with loading indicator
     resultsContainer.innerHTML = `
         <div style="height: calc(100vh - 200px); width: 100%;">
             <iframe 
@@ -113,4 +111,42 @@ function performSearch(query) {
             ">Loading...</div>
         </div>
     `;
-} 
+
+    // Set up automatic new word search
+    if (window.searchRefreshInterval) {
+        clearInterval(window.searchRefreshInterval);
+    }
+    
+    window.searchRefreshInterval = setInterval(() => {
+        if (!sidebar.classList.contains('closed')) {
+            console.log('Performing new word search...');
+            const wordElement = document.querySelector('#wordCardText');
+            if (wordElement) {
+                const newSearchText = wordElement.textContent.trim();
+                console.log('Found new word:', newSearchText);
+                
+                // Update search input with the new text
+                const searchInput = sidebar.querySelector('#searchInput');
+                if (searchInput) {
+                    searchInput.value = newSearchText;
+                }
+                
+                // Perform the new search
+                const iframe = resultsContainer.querySelector('iframe');
+                if (iframe) {
+                    iframe.src = `https://www.bing.com/images/search?q=${encodeURIComponent(newSearchText)}`;
+                }
+            }
+        }
+    }, 3000); // Search new word every 3 seconds
+}
+
+// Add cleanup when sidebar is closed
+sidebar.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'transform' && sidebar.classList.contains('closed')) {
+        if (window.searchRefreshInterval) {
+            clearInterval(window.searchRefreshInterval);
+            window.searchRefreshInterval = null;
+        }
+    }
+}); 
