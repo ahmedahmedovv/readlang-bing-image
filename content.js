@@ -41,6 +41,13 @@ function createSidebar() {
     document.body.appendChild(sidebar);
     console.log('Sidebar added to page');
     
+    const closeButton = sidebar.querySelector('#closeButton');
+    if (closeButton) {
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.add('closed');
+        });
+    }
+    
     return sidebar;
 }
 
@@ -65,7 +72,7 @@ function performSearch(query) {
     // Using Bing image search
     const searchUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
     
-    // Create an iframe to show the search results
+    // Create an iframe with loading indicator
     resultsContainer.innerHTML = `
         <div style="height: calc(100vh - 200px); width: 100%;">
             <iframe 
@@ -77,7 +84,14 @@ function performSearch(query) {
                     border-radius: 4px;
                     background: white;
                 "
+                onload="this.parentNode.querySelector('.loading-indicator')?.remove()"
             ></iframe>
+            <div class="loading-indicator" style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            ">Loading...</div>
         </div>
     `;
 } 
