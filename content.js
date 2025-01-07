@@ -21,14 +21,40 @@ function createSidebar() {
             if (content) {
                 sidebar.appendChild(content);
                 
-                // Add search functionality
-                const searchButton = sidebar.querySelector('#searchButton');
-                const searchInput = sidebar.querySelector('#searchInput');
+                // Find and search for word when sidebar opens
+                const searchForWord = () => {
+                    const wordElement = document.querySelector('#wordCardText');
+                    if (wordElement) {
+                        const searchText = wordElement.textContent.trim();
+                        console.log('Found word:', searchText);
+                        
+                        // Update search input with the found text
+                        const searchInput = sidebar.querySelector('#searchInput');
+                        if (searchInput) {
+                            searchInput.value = searchText;
+                        }
+                        
+                        // Perform the search
+                        performSearch(searchText);
+                    } else {
+                        console.log('No word element found');
+                        document.querySelector('#searchResults').innerHTML = 
+                            '<div style="padding: 20px; text-align: center; color: #666;">No word selected on the page</div>';
+                    }
+                };
                 
-                searchButton.addEventListener('click', () => performSearch(searchInput.value));
-                searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        performSearch(searchInput.value);
+                // Add close button functionality
+                const closeButton = sidebar.querySelector('#closeButton');
+                if (closeButton) {
+                    closeButton.addEventListener('click', () => {
+                        sidebar.classList.add('closed');
+                    });
+                }
+                
+                // Search automatically when sidebar is opened
+                sidebar.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'transform' && !sidebar.classList.contains('closed')) {
+                        searchForWord();
                     }
                 });
                 
@@ -40,13 +66,6 @@ function createSidebar() {
     // Add to document
     document.body.appendChild(sidebar);
     console.log('Sidebar added to page');
-    
-    const closeButton = sidebar.querySelector('#closeButton');
-    if (closeButton) {
-        closeButton.addEventListener('click', () => {
-            sidebar.classList.add('closed');
-        });
-    }
     
     return sidebar;
 }
@@ -63,7 +82,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // Add debug log for sidebar state
         console.log('Sidebar classes:', sidebar.className);
     }
-}); 
+});
 
 function performSearch(query) {
     const resultsContainer = document.querySelector('#searchResults');
