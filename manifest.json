@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Hello World Sidebar",
+  "version": "1.0",
+  "description": "A simple sidebar extension",
+  "permissions": ["activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open Sidebar"
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "css": ["sidebar.css"],
+    "js": ["content.js"]
+  }],
+  "web_accessible_resources": [{
+    "resources": ["sidebar.html"],
+    "matches": ["<all_urls>"]
+  }]
+} 
