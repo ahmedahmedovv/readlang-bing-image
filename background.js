@@ -1,8 +1,7 @@
-chrome.action.onClicked.addListener((tab) => {
-  console.log('Extension icon clicked');
-  chrome.tabs.sendMessage(tab.id, {action: "toggle_sidebar"}, (response) => {
-    if (chrome.runtime.lastError) {
-      console.error('Error:', chrome.runtime.lastError);
-    }
-  });
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
+
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.sendMessage(activeInfo.tabId, { action: "check_word" });
 }); 
