@@ -11,8 +11,19 @@ function createSidebar() {
     sidebar = document.createElement('div');
     sidebar.className = 'extension-sidebar closed';
     
-    // Add immediate content while HTML loads
-    sidebar.innerHTML = '<div class="sidebar-content"><h1>Hello World!</h1></div>';
+    // Load sidebar content from HTML file
+    fetch(chrome.runtime.getURL('sidebar.html'))
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const content = doc.querySelector('.sidebar-content');
+            if (content) {
+                sidebar.appendChild(content);
+                console.log('Sidebar content loaded from HTML');
+            }
+        })
+        .catch(error => console.error('Error loading sidebar:', error));
     
     // Add to document
     document.body.appendChild(sidebar);
