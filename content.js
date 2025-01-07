@@ -94,13 +94,7 @@ function performSearch(query) {
         <div style="height: calc(100vh - 200px); width: 100%;">
             <iframe 
                 src="${searchUrl}"
-                style="
-                    width: 100%;
-                    height: 100%;
-                    border: none;
-                    border-radius: 4px;
-                    background: white;
-                "
+                style="width: 100%; height: 100%; border: none; border-radius: 4px; background: white;"
                 onload="this.parentNode.querySelector('.loading-indicator')?.remove()"
             ></iframe>
             <div class="loading-indicator" style="
@@ -112,18 +106,17 @@ function performSearch(query) {
         </div>
     `;
 
-    // Set up automatic new word search
-    if (window.searchRefreshInterval) {
-        clearInterval(window.searchRefreshInterval);
+    // Set up mutation observer instead of interval
+    if (window.wordObserver) {
+        window.wordObserver.disconnect();
     }
     
-    window.searchRefreshInterval = setInterval(() => {
+    window.wordObserver = new MutationObserver((mutations) => {
         if (!sidebar.classList.contains('closed')) {
-            console.log('Performing new word search...');
             const wordElement = document.querySelector('#wordCardText');
             if (wordElement) {
                 const newSearchText = wordElement.textContent.trim();
-                console.log('Found new word:', newSearchText);
+                console.log('Content changed, found new word:', newSearchText);
                 
                 // Update search input with the new text
                 const searchInput = sidebar.querySelector('#searchInput');
@@ -138,15 +131,22 @@ function performSearch(query) {
                 }
             }
         }
-    }, 3000); // Search new word every 3 seconds
+    });
+
+    // Start observing the document with configured parameters
+    window.wordObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
 }
 
-// Add cleanup when sidebar is closed
+// Update cleanup when sidebar is closed
 sidebar.addEventListener('transitionend', (e) => {
     if (e.propertyName === 'transform' && sidebar.classList.contains('closed')) {
-        if (window.searchRefreshInterval) {
-            clearInterval(window.searchRefreshInterval);
-            window.searchRefreshInterval = null;
+        if (window.wordObserver) {
+            window.wordObserver.disconnect();
+            window.wordObserver = null;
         }
     }
 }); 
